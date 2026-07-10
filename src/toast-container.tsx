@@ -2,17 +2,17 @@ import React, { Component } from "react";
 import {
   StyleSheet,
   ViewStyle,
-  KeyboardAvoidingView,
   Platform,
-  Dimensions, SafeAreaView,
+  Dimensions,
+  View,
 } from "react-native";
 import Toast, { ToastOptions, ToastProps } from "./toast";
 
 const { height, width } = Dimensions.get("window");
 
 export interface Props extends ToastOptions {
-  renderToast?(toast: ToastProps): JSX.Element;
-  renderType?: { [type: string]: (toast: ToastProps) => JSX.Element };
+  renderToast?(toast: ToastProps): React.ReactNode;
+  renderType?: { [type: string]: (toast: ToastProps) => React.ReactNode };
   offset?: number;
   offsetTop?: number;
   offsetBottom?: number;
@@ -40,7 +40,7 @@ class ToastContainer extends Component<Props, State> {
   /**
    * Shows a new toast. Returns id
    */
-  show = (message: string | JSX.Element, toastOptions?: ToastOptions) => {
+  show = (message: string | React.ReactNode, toastOptions?: ToastOptions) => {
     let id = toastOptions?.id || Math.random().toString();
     const onDestroy = () => {
       toastOptions?.onClose && toastOptions?.onClose();
@@ -72,7 +72,7 @@ class ToastContainer extends Component<Props, State> {
    */
   update = (
     id: string,
-    message: string | JSX.Element,
+    message: string | React.ReactNode,
     toastOptions?: ToastOptions
   ) => {
     this.setState({
@@ -118,20 +118,19 @@ class ToastContainer extends Component<Props, State> {
       justifyContent: "flex-end",
       flexDirection: "column",
     };
+
+    const data = toasts.filter((t) => !t.placement || t.placement === "bottom");
+    const foundToast = data.length > 0;
+
+    if (!foundToast) return null;
+
     return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "position" : undefined}
-        style={[styles.container, style]}
-        pointerEvents="box-none"
-      >
-        <SafeAreaView>
-          {toasts
-            .filter((t) => !t.placement || t.placement === "bottom")
+        <View style={[styles.container, style]}>
+          {data
             .map((toast) => (
               <Toast key={toast.id} {...toast} />
             ))}
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+        </View>
     );
   }
 
@@ -144,20 +143,19 @@ class ToastContainer extends Component<Props, State> {
       justifyContent: "flex-start",
       flexDirection: "column-reverse",
     };
+
+    const data = toasts.filter((t) => t.placement === "top");
+    const foundToast = data.length > 0;
+
+    if (!foundToast) return null;
+
     return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "position" : undefined}
-        style={[styles.container, style]}
-        pointerEvents="box-none"
-      >
-        <SafeAreaView>
-          {toasts
-            .filter((t) => t.placement === "top")
+        <View style={[styles.container,style]}>
+          {data
             .map((toast) => (
               <Toast key={toast.id} {...toast} />
             ))}
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+        </View>
     );
   }
 
@@ -178,17 +176,14 @@ class ToastContainer extends Component<Props, State> {
     if (!foundToast) return null;
 
     return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "position" : undefined}
+      <View
         style={[styles.container, style]}
-        pointerEvents="box-none"
       >
-        {toasts
-          .filter((t) => t.placement === "center")
+        {data
           .map((toast) => (
             <Toast key={toast.id} {...toast} />
           ))}
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 
