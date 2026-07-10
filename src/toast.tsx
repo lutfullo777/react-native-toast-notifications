@@ -152,7 +152,7 @@ const Toast: FC<ToastProps> = (props) => {
   const [animation] = useState(new Animated.Value(0));
   const panResponderRef = useRef<PanResponderInstance>(null);
   const panResponderAnimRef = useRef<Animated.ValueXY>(null);
-  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const closeTimeoutRef = useRef<any>(null);
   const dims = useDimensions();
 
   useEffect(() => {
