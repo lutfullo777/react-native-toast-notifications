@@ -24,7 +24,7 @@ export interface ToastOptions {
   /**
    * Customize toast icon
    */
-  icon?: JSX.Element;
+  icon?: React.ReactNode;
 
   /**
    * Toast types, You can implement your custom types with JSX using renderType method on ToastContainer.
@@ -64,17 +64,17 @@ export interface ToastOptions {
   /**
    * Customize success type icon
    */
-  successIcon?: JSX.Element;
+  successIcon?: React.ReactNode;
 
   /**
    * Customize danger type icon
    */
-  dangerIcon?: JSX.Element;
+  dangerIcon?: React.ReactNode;
 
   /**
    * Customize warning type icon
    */
-  warningIcon?: JSX.Element;
+  warningIcon?: React.ReactNode;
 
   /**
    * Customize success type color. changes toast background color
@@ -117,10 +117,10 @@ export interface ToastOptions {
 export interface ToastProps extends ToastOptions {
   id: string;
   onDestroy(): void;
-  message: string | JSX.Element;
+  message: string | React.ReactNode;
   open: boolean;
-  renderToast?(toast: ToastProps): JSX.Element;
-  renderType?: { [type: string]: (toast: ToastProps) => JSX.Element };
+  renderToast?(toast: ToastProps): React.ReactNode;
+  renderType?: { [type: string]: (toast: ToastProps) => React.ReactNode };
   onHide(): void;
 }
 
@@ -150,8 +150,8 @@ const Toast: FC<ToastProps> = (props) => {
 
   const containerRef = useRef<View>(null);
   const [animation] = useState(new Animated.Value(0));
-  const panResponderRef = useRef<PanResponderInstance>();
-  const panResponderAnimRef = useRef<Animated.ValueXY>();
+  const panResponderRef = useRef<PanResponderInstance>(null);
+  const panResponderAnimRef = useRef<Animated.ValueXY>(null);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const dims = useDimensions();
 
@@ -285,7 +285,7 @@ const Toast: FC<ToastProps> = (props) => {
       backgroundColor = normalColor || "#333";
   }
 
-  const animationStyle: Animated.WithAnimatedObject<ViewStyle> = {
+  const animationStyle: any = {
     opacity: animation,
     transform: [
       {
